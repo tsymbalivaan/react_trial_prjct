@@ -1,26 +1,35 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect } from 'react';
+import { AppSelector } from 'hooks/types';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+// Selectors
+import { selectorGetUser } from 'store/reducers/auth/selectors';
+
+// Components
+import Home from 'pages/Home';
+import Auth from 'pages/Auth';
+
+// Enum
+import { ROUTERS } from 'Routers';
+
+const App = () => {
+	const user = AppSelector(selectorGetUser);
+	const navigate = useNavigate();
+	useEffect(() => {
+		if (!user) {
+			navigate(ROUTERS.AUTH);
+			return;
+		}
+		navigate(ROUTERS.HOME);
+	}, [user]);
+	return (
+		<div className="App">
+			<Routes>
+				<Route element={<Auth />} path={ROUTERS.AUTH} />
+				<Route element={<Home />} path={ROUTERS.HOME} />
+			</Routes>
+		</div>
+	);
+};
 
 export default App;
